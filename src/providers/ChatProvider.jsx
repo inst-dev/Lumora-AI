@@ -20,7 +20,7 @@ export function ChatProvider({ children }) {
   const [activeConversation, setActiveConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedModel, setSelectedModel] = useState('gemini-1.5-flash');
+  const [selectedModel, setSelectedModel] = useState('gemini-2.0-flash');
   const [streamingMessage, setStreamingMessage] = useState('');
   
   // Refs for abort control

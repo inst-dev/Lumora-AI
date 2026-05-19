@@ -16,7 +16,7 @@ import Dropdown, { DropdownItem } from '@/components/ui/Dropdown';
 
 // Available AI models for selection
 const models = [
-  { id: 'gemini-1.5-flash', name: 'Gemini Flash', provider: 'Google', free: true },
+  { id: 'gemini-2.0-flash', name: 'Gemini Flash', provider: 'Google', free: true },
   { id: 'gemini-1.5-pro', name: 'Gemini Pro', provider: 'Google', free: false },
   { id: 'gpt-4o', name: 'GPT-4o', provider: 'OpenAI', free: false },
   { id: 'gpt-4o-mini', name: 'GPT-4o Mini', provider: 'OpenAI', free: false },

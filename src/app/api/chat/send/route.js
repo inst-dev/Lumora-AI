@@ -189,7 +189,7 @@ async function checkModelAccess(userId, model) {
     [userId]
   );
 
-  const allowedModels = JSON.parse(subscription[0]?.allowed_models || '["gemini-1.5-flash"]');
+  const allowedModels = JSON.parse(subscription[0]?.allowed_models || '["gemini-2.0-flash"]');
   if (allowedModels.includes('all') || allowedModels.includes(model)) {
     return { allowed: true };
   }

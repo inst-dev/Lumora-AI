@@ -9,6 +9,14 @@
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
 
+// Model name mapping - ensures correct API model names
+const MODEL_MAP = {
+  'gemini-1.5-flash': 'gemini-2.0-flash',
+  'gemini-1.5-pro': 'gemini-2.0-flash',
+  'gemini-pro': 'gemini-2.0-flash',
+  'gemini-2.0-flash': 'gemini-2.0-flash',
+};
+
 /**
  * Call Google Gemini API with streaming
  * @param {Object} options - Request options
@@ -18,7 +26,8 @@ export async function callGemini({ model, messages, onChunk }) {
     throw new Error('Gemini API key not configured');
   }
 
-  const url = `${BASE_URL}/models/${model}:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`;
+  const actualModel = MODEL_MAP[model] || 'gemini-2.0-flash';
+  const url = `${BASE_URL}/models/${actualModel}:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`;
 
   // Convert messages to Gemini format
   const contents = messages.map((msg) => ({
