@@ -1,0 +1,757 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<head lang="en">
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title>Lumora AI - Documentation</title>
+	<!-- Framework CSS -->
+	<link rel="stylesheet" href="assets/blueprint-css/screen.css" type="text/css" media="screen, projection">
+	<link rel="stylesheet" href="assets/blueprint-css/print.css" type="text/css" media="print">
+	<!--[if lt IE 8]><link rel="stylesheet" href="assets/blueprint-css/ie.css" type="text/css" media="screen, projection"><![endif]-->
+	<link rel="stylesheet" href="assets/blueprint-css/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
+	<style type="text/css" media="screen">
+		p, table, hr, .box { margin-bottom:25px; }
+		.box p { margin-bottom:10px; }
+	</style>
+</head>
+
+
+<body>
+	<div class="container">
+	
+		<h3 class="center alt">&ldquo;Lumora AI&rdquo; Documentation by &ldquo;Lumora&rdquo; v1.0</h3>
+		
+		<hr>
+		
+		<h1 class="center">&ldquo;Lumora AI - Next-Generation AI Chat Platform&rdquo;</h1>
+		
+		<div class="borderTop">
+			<div class="span-6 colborder info prepend-1">
+				<p class="prepend-top">
+					<strong>
+					Created: 19/05/2025<br>
+					By: Lumora<br>
+					Email: <a href="mailto:support@lumora.ai">support@lumora.ai</a>
+					</strong>
+				</p>
+			</div><!-- end div .span-6 -->		
+	
+			<div class="span-12 last">
+				<p class="prepend-top append-0">Thank you for purchasing Lumora AI. If you have any questions that are beyond the scope of this help file, please feel free to email via my user page contact form <a href="http://codecanyon.net/user/lumora">here</a>. Thanks so much!</p>
+			</div>
+		</div><!-- end div .borderTop -->
+		
+		<hr>
+
+		
+		<h2 id="toc" class="alt">Table of Contents</h2>
+		<ol class="alpha">
+			<li><a href="#requirements">Server Requirements</a></li>
+			<li><a href="#installation">Installation Guide</a></li>
+			<li><a href="#database">Database Setup</a></li>
+			<li><a href="#envConfig">Environment Configuration</a></li>
+			<li><a href="#aiProviders">AI Provider Setup</a></li>
+			<li><a href="#payments">Payment Gateway Configuration</a></li>
+			<li><a href="#smtp">SMTP / Email Setup</a></li>
+			<li><a href="#deployment">Deployment Options</a></li>
+			<li><a href="#adminPanel">Admin Panel Usage</a></li>
+			<li><a href="#subscriptions">Subscription & Plans Setup</a></li>
+			<li><a href="#license">License Verification</a></li>
+			<li><a href="#structure">File & Folder Structure</a></li>
+			<li><a href="#customization">Customization Guide</a></li>
+			<li><a href="#troubleshooting">Troubleshooting</a></li>
+			<li><a href="#credits">Sources and Credits</a></li>
+		</ol>
+		
+		<hr>
+
+
+		<h3 id="requirements"><strong>A) Server Requirements</strong> - <a href="#toc">top</a></h3>
+		
+		<p>Before installing Lumora AI, ensure your server meets the following minimum requirements:</p>
+		
+		<ul>
+			<li><strong>Node.js</strong> - Version 18.0 or higher (recommended: v20 LTS)</li>
+			<li><strong>MySQL</strong> - Version 5.7 or higher (recommended: v8.0)</li>
+			<li><strong>npm</strong> - Version 9.0 or higher</li>
+			<li><strong>RAM</strong> - Minimum 512MB (recommended: 1GB+)</li>
+			<li><strong>Storage</strong> - Minimum 500MB free space</li>
+			<li><strong>SSL Certificate</strong> - Required for production (HTTPS)</li>
+			<li><strong>PM2</strong> - Process manager for Node.js (for production)</li>
+		</ul>
+
+		<p><strong>Supported Hosting:</strong></p>
+		<ul>
+			<li>VPS (DigitalOcean, Vultr, Linode, AWS EC2)</li>
+			<li>aaPanel / BT Panel hosting</li>
+			<li>cPanel with Node.js support</li>
+			<li>Vercel (easiest deployment)</li>
+			<li>Any Linux server with Node.js</li>
+		</ul>
+		
+		<hr>
+
+
+		<h3 id="installation"><strong>B) Installation Guide</strong> - <a href="#toc">top</a></h3>
+		
+		<p>Follow these steps to install Lumora AI on your server:</p>
+
+		<p><strong>Step 1: Upload Files</strong></p>
+		<p>Upload all project files to your web server directory. For example:</p>
+<pre>	/www/wwwroot/yourdomain.com/
+	   or
+	/var/www/yourdomain.com/
+</pre>
+
+		<p><strong>Step 2: Install Dependencies</strong></p>
+<pre>	cd /path/to/your/project
+	npm install
+</pre>
+
+		<p><strong>Step 3: Configure Environment</strong></p>
+<pre>	cp .env.example .env.local
+	nano .env.local
+</pre>
+		<p>Fill in your database credentials, API keys, and secrets. See section D for full details.</p>
+
+		<p><strong>Step 4: Generate Security Keys</strong></p>
+<pre>	openssl rand -hex 32    # Use for JWT_SECRET
+	openssl rand -hex 16    # Use for CSRF_SECRET
+	openssl rand -hex 16    # Use for ENCRYPTION_KEY
+</pre>
+
+		<p><strong>Step 5: Setup Database</strong></p>
+<pre>	mysql -u YOUR_USER -p YOUR_DATABASE &lt; src/lib/database/schema.sql
+</pre>
+
+		<p><strong>Step 6: Build the Project</strong></p>
+<pre>	npm run build
+</pre>
+
+		<p><strong>Step 7: Start the Application</strong></p>
+<pre>	# Install PM2 (production process manager)
+	npm install -g pm2
+
+	# Start on your chosen port (avoid common ports like 3000/4000)
+	pm2 start npm --name "lumora-ai" -- start -- -p 7847
+
+	# Enable auto-restart on server reboot
+	pm2 startup
+	pm2 save
+</pre>
+
+		<p><strong>Step 8: Configure Reverse Proxy (Nginx)</strong></p>
+		<p>Add this to your Nginx site configuration:</p>
+<pre>	location / {
+	    proxy_pass http://127.0.0.1:7847;
+	    proxy_http_version 1.1;
+	    proxy_set_header Upgrade $http_upgrade;
+	    proxy_set_header Connection 'upgrade';
+	    proxy_set_header Host $host;
+	    proxy_set_header X-Real-IP $remote_addr;
+	    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	    proxy_set_header X-Forwarded-Proto $scheme;
+	    proxy_cache_bypass $http_upgrade;
+	    proxy_read_timeout 86400s;
+	    proxy_send_timeout 86400s;
+	}
+</pre>
+
+		<p><strong>Step 9: Access Installer</strong></p>
+		<p>Visit <code>https://yourdomain.com/install</code> to complete setup via the web installer.</p>
+
+		<p><strong>Step 10: Finalize</strong></p>
+		<p>After the installer completes, set <code>INSTALLED=true</code> in your <code>.env.local</code> file and restart:</p>
+<pre>	pm2 restart lumora-ai
+</pre>
+		
+		<hr>
+
+
+		<h3 id="database"><strong>C) Database Setup</strong> - <a href="#toc">top</a></h3>
+		
+		<p>Lumora AI uses MySQL as its database. Here's how to set it up:</p>
+
+		<p><strong>Create Database:</strong></p>
+<pre>	mysql -u root -p
+	CREATE DATABASE lumora_ai CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+	CREATE USER 'lumora_user'@'localhost' IDENTIFIED BY 'your_secure_password';
+	GRANT ALL PRIVILEGES ON lumora_ai.* TO 'lumora_user'@'localhost';
+	FLUSH PRIVILEGES;
+	EXIT;
+</pre>
+
+		<p><strong>Import Schema:</strong></p>
+<pre>	mysql -u lumora_user -p lumora_ai &lt; src/lib/database/schema.sql
+</pre>
+
+		<p><strong>Database Tables Created:</strong></p>
+		<ul>
+			<li><code>users</code> - User accounts and profiles</li>
+			<li><code>user_sessions</code> - Active login sessions</li>
+			<li><code>conversations</code> - Chat conversations</li>
+			<li><code>messages</code> - Individual chat messages</li>
+			<li><code>subscription_plans</code> - Available plans (Free, Pro, Enterprise)</li>
+			<li><code>user_subscriptions</code> - User plan assignments</li>
+			<li><code>payments</code> - Payment transaction history</li>
+			<li><code>ai_providers</code> - AI provider configurations</li>
+			<li><code>usage_logs</code> - API usage tracking</li>
+			<li><code>coupons</code> - Discount coupon codes</li>
+			<li><code>support_tickets</code> - User support requests</li>
+			<li><code>announcements</code> - System announcements</li>
+			<li><code>site_settings</code> - Platform configuration</li>
+			<li><code>blog_posts</code> - Blog content</li>
+			<li><code>image_generations</code> - AI image history</li>
+			<li><code>notifications</code> - User notifications</li>
+			<li><code>license_activations</code> - License tracking</li>
+			<li><code>system_logs</code> - Error and system logs</li>
+		</ul>
+
+		<p>The schema also inserts default subscription plans (Free, Pro, Enterprise) and default AI providers (Gemini, OpenAI, Claude, Grok).</p>
+		
+		<hr>
+
+
+		<h3 id="envConfig"><strong>D) Environment Configuration</strong> - <a href="#toc">top</a></h3>
+		
+		<p>All configuration is managed through the <code>.env.local</code> file. Here is a complete reference:</p>
+
+		<p><strong>Application Settings:</strong></p>
+<pre>	NEXT_PUBLIC_APP_NAME="Lumora AI"
+	NEXT_PUBLIC_APP_URL=https://yourdomain.com
+	NEXT_PUBLIC_APP_VERSION=1.0.0
+	APP_ENVIRONMENT=production
+	INSTALLED=true
+</pre>
+
+		<p><strong>Database:</strong></p>
+<pre>	DB_HOST=localhost
+	DB_PORT=3306
+	DB_NAME=lumora_ai
+	DB_USER=your_db_user
+	DB_PASSWORD=your_db_password
+</pre>
+
+		<p><strong>Authentication:</strong></p>
+<pre>	JWT_SECRET=your-64-char-random-hex-string
+	JWT_EXPIRY=7d
+	REFRESH_TOKEN_EXPIRY=30d
+	SESSION_COOKIE_NAME=lumora_session
+</pre>
+
+		<p><strong>Security:</strong></p>
+<pre>	CSRF_SECRET=your-32-char-random-hex-string
+	ENCRYPTION_KEY=your-32-char-random-hex-string
+</pre>
+
+		<p><strong>Rate Limiting:</strong></p>
+<pre>	RATE_LIMIT_WINDOW=900000
+	RATE_LIMIT_MAX_REQUESTS=100
+	AUTH_RATE_LIMIT_MAX=5
+</pre>
+
+		<p><strong>Important:</strong> Never commit <code>.env.local</code> to version control. It contains sensitive secrets.</p>
+		
+		<hr>
+
+
+		<h3 id="aiProviders"><strong>E) AI Provider Setup</strong> - <a href="#toc">top</a></h3>
+		
+		<p>Lumora AI supports 4 AI providers. You need at least one API key (Gemini recommended for free tier).</p>
+
+		<p><strong>1. Google Gemini (Recommended - has free tier)</strong></p>
+		<ol>
+			<li>Go to <a href="https://aistudio.google.com/apikey">https://aistudio.google.com/apikey</a></li>
+			<li>Click "Create API Key"</li>
+			<li>Copy the key and add to <code>.env.local</code>:</li>
+		</ol>
+<pre>	GEMINI_API_KEY=your-gemini-api-key
+</pre>
+
+		<p><strong>2. OpenAI (GPT-4)</strong></p>
+		<ol>
+			<li>Go to <a href="https://platform.openai.com/api-keys">https://platform.openai.com/api-keys</a></li>
+			<li>Create a new secret key</li>
+			<li>Add billing/credits to your account</li>
+			<li>Add to <code>.env.local</code>:</li>
+		</ol>
+<pre>	OPENAI_API_KEY=sk-your-openai-key
+</pre>
+
+		<p><strong>3. Anthropic Claude</strong></p>
+		<ol>
+			<li>Go to <a href="https://console.anthropic.com/">https://console.anthropic.com/</a></li>
+			<li>Create an API key</li>
+			<li>Add to <code>.env.local</code>:</li>
+		</ol>
+<pre>	CLAUDE_API_KEY=sk-ant-your-claude-key
+</pre>
+
+		<p><strong>4. xAI Grok</strong></p>
+		<ol>
+			<li>Go to <a href="https://console.x.ai/">https://console.x.ai/</a></li>
+			<li>Generate an API key</li>
+			<li>Add to <code>.env.local</code>:</li>
+		</ol>
+<pre>	GROK_API_KEY=your-grok-api-key
+</pre>
+
+		<p><strong>Admin Management:</strong> After setup, you can enable/disable providers and manage API keys from the Admin Panel &gt; AI Providers page.</p>
+		
+		<hr>
+
+
+		<h3 id="payments"><strong>F) Payment Gateway Configuration</strong> - <a href="#toc">top</a></h3>
+		
+		<p>Lumora AI supports multiple payment gateways. Configure only the ones you need:</p>
+
+		<p><strong>Stripe (Recommended)</strong></p>
+		<ol>
+			<li>Create account at <a href="https://stripe.com">stripe.com</a></li>
+			<li>Go to Developers &gt; API Keys</li>
+			<li>Copy Publishable key and Secret key</li>
+			<li>Set up a webhook endpoint: <code>https://yourdomain.com/api/payments/webhook/stripe</code></li>
+		</ol>
+<pre>	STRIPE_PUBLIC_KEY=pk_live_your-key
+	STRIPE_SECRET_KEY=sk_live_your-key
+	STRIPE_WEBHOOK_SECRET=whsec_your-webhook-secret
+</pre>
+
+		<p><strong>PayPal</strong></p>
+		<ol>
+			<li>Go to <a href="https://developer.paypal.com">developer.paypal.com</a></li>
+			<li>Create an app and get Client ID and Secret</li>
+		</ol>
+<pre>	PAYPAL_CLIENT_ID=your-client-id
+	PAYPAL_CLIENT_SECRET=your-client-secret
+	PAYPAL_MODE=live
+</pre>
+
+		<p><strong>Razorpay (India)</strong></p>
+<pre>	RAZORPAY_KEY_ID=rzp_live_your-key
+	RAZORPAY_KEY_SECRET=your-secret
+</pre>
+
+		<p><strong>PayHere (Sri Lanka)</strong></p>
+<pre>	PAYHERE_MERCHANT_ID=your-merchant-id
+	PAYHERE_MERCHANT_SECRET=your-merchant-secret
+	PAYHERE_MODE=live
+</pre>
+
+		<p><strong>Paddle</strong></p>
+<pre>	PADDLE_VENDOR_ID=your-vendor-id
+	PADDLE_API_KEY=your-api-key
+</pre>
+
+		<p><strong>LemonSqueezy</strong></p>
+<pre>	LEMONSQUEEZY_API_KEY=your-api-key
+	LEMONSQUEEZY_STORE_ID=your-store-id
+</pre>
+
+		<p><strong>Note:</strong> You only need to configure one gateway to get started. Stripe is recommended for most users.</p>
+		
+		<hr>
+
+
+		<h3 id="smtp"><strong>G) SMTP / Email Setup</strong> - <a href="#toc">top</a></h3>
+		
+		<p>Email is used for user verification, password resets, and notifications. Configure your SMTP provider:</p>
+
+		<p><strong>Gmail Example:</strong></p>
+<pre>	SMTP_HOST=smtp.gmail.com
+	SMTP_PORT=587
+	SMTP_USER=your-email@gmail.com
+	SMTP_PASSWORD=your-app-password
+	SMTP_FROM_NAME="Lumora AI"
+	SMTP_FROM_EMAIL=noreply@yourdomain.com
+</pre>
+
+		<p><strong>Important for Gmail:</strong> You need to use an "App Password" not your regular password. Go to Google Account &gt; Security &gt; 2-Step Verification &gt; App Passwords.</p>
+
+		<p><strong>Other SMTP Providers:</strong></p>
+		<ul>
+			<li><strong>SendGrid:</strong> Host: smtp.sendgrid.net, Port: 587</li>
+			<li><strong>Mailgun:</strong> Host: smtp.mailgun.org, Port: 587</li>
+			<li><strong>Amazon SES:</strong> Host: email-smtp.us-east-1.amazonaws.com, Port: 587</li>
+			<li><strong>Zoho:</strong> Host: smtp.zoho.com, Port: 465</li>
+		</ul>
+
+		<p>You can test your email configuration from Admin Panel &gt; Settings &gt; Email &gt; "Send Test Email".</p>
+		
+		<hr>
+
+
+		<h3 id="deployment"><strong>H) Deployment Options</strong> - <a href="#toc">top</a></h3>
+		
+		<p>Lumora AI can be deployed on various platforms:</p>
+
+		<p><strong>Option 1: VPS with aaPanel/BT Panel</strong></p>
+		<ol>
+			<li>Upload files to <code>/www/wwwroot/yourdomain.com/</code></li>
+			<li>Run <code>npm install && npm run build</code></li>
+			<li>Start with PM2: <code>pm2 start npm --name "lumora-ai" -- start -- -p 7847</code></li>
+			<li>Add reverse proxy in your panel pointing to <code>http://127.0.0.1:7847</code></li>
+			<li>Enable SSL certificate</li>
+		</ol>
+
+		<p><strong>Option 2: Vercel (Easiest)</strong></p>
+		<ol>
+			<li>Push code to GitHub</li>
+			<li>Connect repository to <a href="https://vercel.com">vercel.com</a></li>
+			<li>Add environment variables in Vercel dashboard</li>
+			<li>Deploy automatically</li>
+		</ol>
+		<p><em>Note: You'll need an external MySQL database (PlanetScale, AWS RDS, etc.)</em></p>
+
+		<p><strong>Option 3: cPanel with Node.js</strong></p>
+		<ol>
+			<li>Upload files via File Manager or SSH</li>
+			<li>Go to Setup Node.js App in cPanel</li>
+			<li>Create application, set entry point to <code>node_modules/.bin/next start -p PORT</code></li>
+			<li>Set environment variables</li>
+			<li>Run npm install and build commands</li>
+		</ol>
+
+		<p><strong>Option 4: Docker</strong></p>
+<pre>	docker build -t lumora-ai .
+	docker run -p 7847:7847 --env-file .env.local lumora-ai
+</pre>
+
+		<p><strong>PM2 Useful Commands:</strong></p>
+<pre>	pm2 start lumora-ai      # Start
+	pm2 stop lumora-ai       # Stop
+	pm2 restart lumora-ai    # Restart
+	pm2 logs lumora-ai       # View logs
+	pm2 monit                # Monitor CPU/Memory
+	pm2 delete lumora-ai     # Remove process
+</pre>
+		
+		<hr>
+
+
+		<h3 id="adminPanel"><strong>I) Admin Panel Usage</strong> - <a href="#toc">top</a></h3>
+		
+		<p>Access the admin panel at: <code>https://yourdomain.com/admin/dashboard</code></p>
+		<p>Login with the admin account created during installation.</p>
+
+		<p><strong>Admin Panel Sections:</strong></p>
+		<ul>
+			<li><strong>Dashboard</strong> - Overview of users, revenue, messages, and subscriptions</li>
+			<li><strong>Users</strong> - Manage users, roles, bans, and account status</li>
+			<li><strong>Subscriptions</strong> - Edit plans, pricing, features, and coupons</li>
+			<li><strong>AI Providers</strong> - Configure API keys, enable/disable models</li>
+			<li><strong>Payments</strong> - View transaction history, revenue reports</li>
+			<li><strong>Analytics</strong> - Usage statistics, peak hours, provider usage</li>
+			<li><strong>Content</strong> - Manage landing page, blog posts, FAQ</li>
+			<li><strong>Support</strong> - Handle user support tickets</li>
+			<li><strong>License</strong> - View activation status and registered domain</li>
+			<li><strong>Settings</strong> - General, Email, Appearance, Security configuration</li>
+		</ul>
+
+		<p><strong>User Roles:</strong></p>
+		<ul>
+			<li><code>admin</code> - Full access to admin panel and all features</li>
+			<li><code>moderator</code> - Can manage content and support tickets</li>
+			<li><code>user</code> - Standard user with chat access</li>
+		</ul>
+		
+		<hr>
+
+
+		<h3 id="subscriptions"><strong>J) Subscription & Plans Setup</strong> - <a href="#toc">top</a></h3>
+		
+		<p>Lumora AI comes with 3 default plans:</p>
+
+		<table>
+			<tr>
+				<th>Plan</th>
+				<th>Price</th>
+				<th>Messages/Day</th>
+				<th>Models</th>
+				<th>Image Gen</th>
+			</tr>
+			<tr>
+				<td>Free</td>
+				<td>$0</td>
+				<td>50</td>
+				<td>Gemini Flash only</td>
+				<td>No</td>
+			</tr>
+			<tr>
+				<td>Pro</td>
+				<td>$19/mo</td>
+				<td>500</td>
+				<td>All models</td>
+				<td>50 credits/mo</td>
+			</tr>
+			<tr>
+				<td>Enterprise</td>
+				<td>$49/mo</td>
+				<td>Unlimited</td>
+				<td>All models</td>
+				<td>Unlimited</td>
+			</tr>
+		</table>
+
+		<p><strong>To modify plans:</strong></p>
+		<ol>
+			<li>Go to Admin Panel &gt; Subscriptions</li>
+			<li>Click "Edit" on any plan</li>
+			<li>Change name, price, limits, and features</li>
+			<li>Save changes</li>
+		</ol>
+
+		<p><strong>Creating Coupons:</strong></p>
+		<ol>
+			<li>Go to Admin Panel &gt; Subscriptions &gt; Active Coupons</li>
+			<li>Click "Create Coupon"</li>
+			<li>Set code, discount type (% or fixed), usage limits, and expiry</li>
+		</ol>
+
+		<p><strong>Subscription Flow:</strong></p>
+		<ol>
+			<li>User visits /billing or /pricing</li>
+			<li>Selects a plan and billing cycle (monthly/yearly)</li>
+			<li>Redirected to payment gateway checkout</li>
+			<li>On success, subscription activates immediately</li>
+			<li>Access to premium models and features unlocked</li>
+		</ol>
+		
+		<hr>
+
+
+		<h3 id="license"><strong>K) License Verification</strong> - <a href="#toc">top</a></h3>
+		
+		<p>Lumora AI includes an Envato purchase code verification system.</p>
+
+		<p><strong>How it works:</strong></p>
+		<ol>
+			<li>During installation, user enters their Envato purchase code</li>
+			<li>The system verifies the code via Envato API</li>
+			<li>On success, the activation is stored in the database</li>
+			<li>License status can be viewed in Admin Panel &gt; License</li>
+		</ol>
+
+		<p><strong>For developers (configuring verification):</strong></p>
+		<p>Add your Envato personal token to <code>.env.local</code>:</p>
+<pre>	ENVATO_PERSONAL_TOKEN=your-envato-personal-token
+	ENVATO_ITEM_ID=your-item-id-from-codecanyon
+</pre>
+
+		<p><strong>To get your personal token:</strong></p>
+		<ol>
+			<li>Go to <a href="https://build.envato.com/create-token/">https://build.envato.com/create-token/</a></li>
+			<li>Enable "View Your Envato Account Username"</li>
+			<li>Enable "View the user's purchases of the app creator's items"</li>
+			<li>Create token and copy it</li>
+		</ol>
+
+		<p><strong>Development Mode:</strong> Set <code>APP_ENVIRONMENT=development</code> to bypass license verification during development.</p>
+		
+		<hr>
+
+
+		<h3 id="structure"><strong>L) File & Folder Structure</strong> - <a href="#toc">top</a></h3>
+		
+		<p>Here is the complete project structure:</p>
+
+<pre>	lumora-ai/
+	├── src/
+	│   ├── app/                      # Next.js App Router
+	│   │   ├── (admin)/admin/        # Admin panel pages
+	│   │   │   ├── analytics/        # Analytics dashboard
+	│   │   │   ├── content/          # Blog & page management
+	│   │   │   ├── dashboard/        # Admin overview
+	│   │   │   ├── license/          # License status
+	│   │   │   ├── payments/         # Transaction history
+	│   │   │   ├── providers/        # AI provider config
+	│   │   │   ├── settings/         # System settings
+	│   │   │   ├── subscriptions/    # Plan management
+	│   │   │   ├── support/          # Support tickets
+	│   │   │   └── users/            # User management
+	│   │   ├── (auth)/               # Authentication pages
+	│   │   │   ├── login/
+	│   │   │   ├── register/
+	│   │   │   └── forgot-password/
+	│   │   ├── (dashboard)/          # User dashboard
+	│   │   │   ├── c/[id]/           # Chat conversation
+	│   │   │   ├── dashboard/        # New chat / home
+	│   │   │   ├── billing/          # Subscription management
+	│   │   │   └── settings/         # User settings
+	│   │   ├── (public)/             # Marketing pages
+	│   │   │   ├── pricing/
+	│   │   │   ├── contact/
+	│   │   │   ├── faq/
+	│   │   │   ├── terms/
+	│   │   │   └── privacy/
+	│   │   ├── api/                  # Backend API routes
+	│   │   │   ├── auth/             # Auth endpoints
+	│   │   │   ├── chat/             # Chat & messages
+	│   │   │   ├── install/          # Installer API
+	│   │   │   └── payments/         # Payment webhooks
+	│   │   ├── install/              # Installation wizard
+	│   │   ├── layout.jsx            # Root layout
+	│   │   ├── page.jsx              # Landing page
+	│   │   └── globals.css           # Global styles & theme
+	│   ├── components/               # Reusable components
+	│   │   ├── ui/                   # Button, Input, Modal, etc.
+	│   │   ├── chat/                 # ChatArea, ChatInput, ChatMessage
+	│   │   └── layout/               # Sidebar
+	│   ├── config/                   # App configuration
+	│   ├── hooks/                    # Custom React hooks
+	│   ├── lib/                      # Core libraries
+	│   │   ├── ai-providers/         # Gemini, OpenAI, Claude, Grok
+	│   │   ├── database/             # MySQL connection & schema
+	│   │   ├── email/                # SMTP mailer service
+	│   │   ├── payments/             # Stripe & gateway router
+	│   │   └── security/             # JWT, bcrypt, CSRF, validation
+	│   ├── providers/                # React context providers
+	│   ├── middleware.js             # Route protection & headers
+	│   └── utils/                    # Helper utilities
+	├── documentation/                # This documentation
+	├── .env.example                  # Environment template
+	├── next.config.mjs               # Next.js configuration
+	├── tailwind.config.js            # Tailwind CSS config
+	├── package.json                  # Dependencies
+	└── README.md                     # Quick start guide
+</pre>
+		
+		<hr>
+
+
+		<h3 id="customization"><strong>M) Customization Guide</strong> - <a href="#toc">top</a></h3>
+		
+		<p><strong>Changing Brand Colors:</strong></p>
+		<p>Edit <code>src/app/globals.css</code> and modify the CSS variables:</p>
+<pre>	:root {
+	    --brand-primary: #6366f1;       /* Change to your color */
+	    --brand-secondary: #8b5cf6;     /* Change to your color */
+	    --brand-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+	}
+</pre>
+
+		<p><strong>Changing Site Name & Branding:</strong></p>
+		<ol>
+			<li>Update <code>NEXT_PUBLIC_APP_NAME</code> in <code>.env.local</code></li>
+			<li>Replace logo in <code>public/images/logo.svg</code></li>
+			<li>Update metadata in <code>src/app/layout.jsx</code></li>
+			<li>Update Admin Panel &gt; Settings &gt; General</li>
+		</ol>
+
+		<p><strong>Modifying Landing Page:</strong></p>
+		<p>Edit <code>src/app/page.jsx</code> to change:</p>
+		<ul>
+			<li>Hero text and description</li>
+			<li>Feature list (at bottom of file)</li>
+			<li>Pricing plans data</li>
+			<li>Testimonials</li>
+		</ul>
+
+		<p><strong>Adding New AI Providers:</strong></p>
+		<ol>
+			<li>Create a new file in <code>src/lib/ai-providers/your-provider.js</code></li>
+			<li>Implement the <code>callYourProvider({ model, messages, onChunk })</code> function</li>
+			<li>Register it in <code>src/lib/ai-providers/router.js</code></li>
+			<li>Add models to <code>src/components/chat/ChatInput.jsx</code></li>
+		</ol>
+
+		<p><strong>Adding New Payment Gateways:</strong></p>
+		<ol>
+			<li>Create integration file in <code>src/lib/payments/your-gateway.js</code></li>
+			<li>Register in <code>src/lib/payments/gateway-router.js</code></li>
+			<li>Add env variables to <code>.env.example</code></li>
+		</ol>
+		
+		<hr>
+
+
+		<h3 id="troubleshooting"><strong>N) Troubleshooting</strong> - <a href="#toc">top</a></h3>
+		
+		<p><strong>Issue: Site shows blank page or 502 error</strong></p>
+		<ul>
+			<li>Check if PM2 process is running: <code>pm2 status</code></li>
+			<li>Check logs: <code>pm2 logs lumora-ai</code></li>
+			<li>Ensure Nginx reverse proxy points to correct port</li>
+			<li>Verify the app built successfully: <code>npm run build</code></li>
+		</ul>
+
+		<p><strong>Issue: Database connection error</strong></p>
+		<ul>
+			<li>Verify credentials in <code>.env.local</code></li>
+			<li>Ensure MySQL is running: <code>systemctl status mysql</code></li>
+			<li>Test connection: <code>mysql -u your_user -p your_database</code></li>
+			<li>Check if database exists and schema is imported</li>
+		</ul>
+
+		<p><strong>Issue: AI chat not responding</strong></p>
+		<ul>
+			<li>Verify AI API key is set in <code>.env.local</code></li>
+			<li>Check provider is enabled in Admin Panel &gt; AI Providers</li>
+			<li>Test API key directly with curl</li>
+			<li>Check logs for API errors: <code>pm2 logs lumora-ai</code></li>
+		</ul>
+
+		<p><strong>Issue: Text invisible on landing page</strong></p>
+		<ul>
+			<li>Clear browser cache (Ctrl+Shift+R)</li>
+			<li>Try incognito/private window</li>
+			<li>Rebuild: <code>rm -rf .next && npm run build</code></li>
+			<li>Restart: <code>pm2 restart lumora-ai</code></li>
+		</ul>
+
+		<p><strong>Issue: Email not sending</strong></p>
+		<ul>
+			<li>Verify SMTP credentials in <code>.env.local</code></li>
+			<li>For Gmail: use App Password, not regular password</li>
+			<li>Check port (587 for TLS, 465 for SSL)</li>
+			<li>Test from Admin Panel &gt; Settings &gt; Email</li>
+		</ul>
+
+		<p><strong>Issue: Payment not processing</strong></p>
+		<ul>
+			<li>Ensure payment gateway keys are for live mode (not test/sandbox)</li>
+			<li>Verify webhook URL is accessible publicly</li>
+			<li>Check Stripe/PayPal dashboard for error logs</li>
+		</ul>
+
+		<p><strong>Common Commands:</strong></p>
+<pre>	pm2 logs lumora-ai --lines 50    # View recent logs
+	pm2 restart lumora-ai            # Restart after changes
+	rm -rf .next && npm run build    # Full rebuild
+	nginx -t && nginx -s reload      # Test & reload Nginx
+</pre>
+		
+		<hr>
+
+
+		<h3 id="credits"><strong>O) Sources and Credits</strong> - <a href="#toc">top</a></h3>
+		
+		<p>The following libraries, frameworks, and resources were used in this project:</p>
+		
+		<ul>
+			<li><strong>Next.js 16</strong> - React framework by Vercel (<a href="https://nextjs.org">nextjs.org</a>)</li>
+			<li><strong>Tailwind CSS 4</strong> - Utility-first CSS framework (<a href="https://tailwindcss.com">tailwindcss.com</a>)</li>
+			<li><strong>Lucide React</strong> - Beautiful open-source icons (<a href="https://lucide.dev">lucide.dev</a>)</li>
+			<li><strong>React Markdown</strong> - Markdown rendering for chat messages</li>
+			<li><strong>Highlight.js</strong> - Code syntax highlighting</li>
+			<li><strong>Framer Motion</strong> - Animation library</li>
+			<li><strong>mysql2</strong> - MySQL driver for Node.js</li>
+			<li><strong>bcryptjs</strong> - Password hashing</li>
+			<li><strong>jsonwebtoken</strong> - JWT authentication</li>
+			<li><strong>Stripe SDK</strong> - Payment processing</li>
+			<li><strong>Nodemailer</strong> - Email sending</li>
+			<li><strong>Zod</strong> - Input validation</li>
+			<li><strong>next-themes</strong> - Dark/light mode switching</li>
+			<li><strong>Inter Font</strong> - Google Fonts (<a href="https://fonts.google.com/specimen/Inter">fonts.google.com</a>)</li>
+			<li><strong>JetBrains Mono</strong> - Monospace font for code blocks</li>
+		</ul>
+		
+		<hr>
+		
+		<p>Once again, thank you so much for purchasing Lumora AI. If you have any questions relating to this product, please feel free to reach out via the CodeCanyon contact form. I'll do my best to assist you promptly.</p> 
+		
+		<p class="append-bottom alt large"><strong>Lumora AI Team</strong></p>
+		<p><a href="#toc">Go To Table of Contents</a></p>
+		
+		<hr class="space">
+	</div><!-- end div .container -->
+</body>
+</html>
