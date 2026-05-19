@@ -34,7 +34,7 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body className="bg-white dark:bg-surface-950 text-surface-900 dark:text-surface-100 antialiased">
+      <body className="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased">
         <ThemeProvider>
           <ToastProvider>
             <AuthProvider>
